@@ -30,6 +30,7 @@
  * 
  * Author: Adam Dunkels <adam@sics.se>
  *
+ * $Id: pt-sem.h,v 1.2 2008/10/14 12:46:39 nvt-se Exp $
  */
 
 /**
@@ -156,16 +157,14 @@ PT_THREAD(driver_thread(struct pt *pt))
  *
  */
 
-#ifndef PT_SEM_H_
-#define PT_SEM_H_
+#ifndef __PT_SEM_H__
+#define __PT_SEM_H__
 
 #include "sys/pt.h"
 
 struct pt_sem {
-  unsigned int head, tail;
+  unsigned int count;
 };
-
-#define PT_SEM_COUNT(s) ((s)->head - (s)->tail)
 
 /**
  * Initialize a semaphore
@@ -181,11 +180,7 @@ struct pt_sem {
  * \param c (unsigned int) The initial count of the semaphore.
  * \hideinitializer
  */
-#define PT_SEM_INIT(s, c)			\
-  do {						\
-    (s)->tail = 0;				\
-    (s)->head = (c);				\
-  } while(0)
+#define PT_SEM_INIT(s, c) (s)->count = c
 
 /**
  * Wait for a semaphore
@@ -205,8 +200,8 @@ struct pt_sem {
  */
 #define PT_SEM_WAIT(pt, s)	\
   do {						\
-    PT_WAIT_UNTIL(pt, PT_SEM_COUNT(s) > 0);	\
-    ++(s)->tail;				\
+    PT_WAIT_UNTIL(pt, (s)->count > 0);		\
+    --(s)->count;				\
   } while(0)
 
 /**
@@ -224,9 +219,9 @@ struct pt_sem {
  *
  * \hideinitializer
  */
-#define PT_SEM_SIGNAL(pt, s) (++(s)->head)
+#define PT_SEM_SIGNAL(pt, s) ++(s)->count
 
-#endif /* PT_SEM_H_ */
+#endif /* __PT_SEM_H__ */
 
 /** @} */
 /** @} */

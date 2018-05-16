@@ -28,6 +28,7 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * $Id: ringbuf.c,v 1.1 2009/03/01 20:23:56 adamdunkels Exp $
  */
 
 /**
@@ -37,8 +38,7 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#include "lib/ringbuf.h"
-#include <sys/cc.h>
+#include "ringbuf.h"
 /*---------------------------------------------------------------------------*/
 void
 ringbuf_init(struct ringbuf *r, uint8_t *dataptr, uint8_t size)
@@ -64,15 +64,8 @@ ringbuf_put(struct ringbuf *r, uint8_t c)
   if(((r->put_ptr - r->get_ptr) & r->mask) == r->mask) {
     return 0;
   }
-  /*
-   * CC_ACCESS_NOW is used because the compiler is allowed to reorder
-   * the access to non-volatile variables.
-   * In this case a reader might read from the moved index/ptr before
-   * its value (c) is written. Reordering makes little sense, but
-   * better safe than sorry.
-   */
-  CC_ACCESS_NOW(uint8_t, r->data[r->put_ptr]) = c;
-  CC_ACCESS_NOW(uint8_t, r->put_ptr) = (r->put_ptr + 1) & r->mask;
+  r->data[r->put_ptr] = c;
+  r->put_ptr = (r->put_ptr + 1) & r->mask;
   return 1;
 }
 /*---------------------------------------------------------------------------*/
@@ -92,17 +85,8 @@ ringbuf_get(struct ringbuf *r)
      most platforms, but C does not guarantee this.
   */
   if(((r->put_ptr - r->get_ptr) & r->mask) > 0) {
-    /*
-     * CC_ACCESS_NOW is used because the compiler is allowed to reorder
-     * the access to non-volatile variables.
-     * In this case the memory might be freed and overwritten by
-     * increasing get_ptr before the value was copied to c.
-     * Opposed to the put-operation this would even make sense,
-     * because the register used for mask can be reused to save c
-     * (on some architectures).
-     */
-    c = CC_ACCESS_NOW(uint8_t, r->data[r->get_ptr]);
-    CC_ACCESS_NOW(uint8_t, r->get_ptr) = (r->get_ptr + 1) & r->mask;
+    c = r->data[r->get_ptr];
+    r->get_ptr = (r->get_ptr + 1) & r->mask;
     return c;
   } else {
     return -1;

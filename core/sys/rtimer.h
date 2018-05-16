@@ -1,3 +1,23 @@
+/** \addtogroup sys
+ * @{ */
+
+/**
+ * \defgroup rt Real-time task scheduling
+ *
+ * The real-time module handles the scheduling and execution of
+ * real-time tasks (with predictable execution times).
+ *
+ * @{
+ */
+
+/**
+ * \file
+ *         Header file for the real-time timer module.
+ * \author
+ *         Adam Dunkels <adam@sics.se>
+ *
+ */
+
 /*
  * Copyright (c) 2005, Swedish Institute of Computer Science
  * All rights reserved.
@@ -28,39 +48,16 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * @(#)$Id: rtimer.h,v 1.11 2010/03/23 13:35:00 fros4943 Exp $
  */
+#ifndef __RTIMER_H__
+#define __RTIMER_H__
 
-/**
- * \file
- *         Header file for the real-time timer module.
- * \author
- *         Adam Dunkels <adam@sics.se>
- *
- */
 
-/** \addtogroup sys
- * @{ */
-
-/**
- * \defgroup rt Real-time task scheduling
- *
- * The real-time module handles the scheduling and execution of
- * real-time tasks (with predictable execution times).
- *
- * @{
- */
-
-#ifndef RTIMER_H_
-#define RTIMER_H_
-
-#include "contiki-conf.h"
-
-#ifndef RTIMER_CLOCK_DIFF
+#ifndef RTIMER_CLOCK_LT
 typedef unsigned short rtimer_clock_t;
-#define RTIMER_CLOCK_DIFF(a,b)     ((signed short)((a)-(b)))
-#endif /* RTIMER_CLOCK_DIFF */
-
-#define RTIMER_CLOCK_LT(a, b)      (RTIMER_CLOCK_DIFF((a),(b)) < 0)
+#define RTIMER_CLOCK_LT(a,b)     ((signed short)((a)-(b)) < 0)
+#endif /* RTIMER_CLOCK_LT */
 
 #include "rtimer-arch.h"
 
@@ -74,7 +71,7 @@ typedef unsigned short rtimer_clock_t;
 void rtimer_init(void);
 
 struct rtimer;
-typedef void (* rtimer_callback_t)(struct rtimer *t, void *ptr);
+typedef char (* rtimer_callback_t)(struct rtimer *t, void *ptr);
 
 /**
  * \brief      Representation of a real-time task
@@ -100,7 +97,6 @@ enum {
  * \brief      Post a real-time task.
  * \param task A pointer to the task variable previously declared with RTIMER_TASK().
  * \param time The time when the task is to be executed.
- * \param duration Unused argument.
  * \param func A function to be called when the task is executed.
  * \param ptr An opaque pointer that will be supplied as an argument to the callback function.
  * \return     Non-zero (true) if the task could be scheduled, zero
@@ -111,7 +107,7 @@ enum {
  *
  */
 int rtimer_set(struct rtimer *task, rtimer_clock_t time,
-	       rtimer_clock_t duration, rtimer_callback_t func, void *ptr);
+         rtimer_callback_t func, void *ptr);
 
 /**
  * \brief      Execute the next real-time task and schedule the next task, if any
@@ -133,6 +129,7 @@ void rtimer_run_next(void);
  * \hideinitializer
  */
 #define RTIMER_NOW() rtimer_arch_now()
+#define RTIMER_NOW_DCO() rtimer_arch_now_dco()
 
 /**
  * \brief      Get the time that a task last was executed
@@ -153,17 +150,7 @@ void rtimer_arch_schedule(rtimer_clock_t t);
 
 #define RTIMER_SECOND RTIMER_ARCH_SECOND
 
-/* RTIMER_GUARD_TIME is the minimum amount of rtimer ticks between
-   the current time and the future time when a rtimer is scheduled.
-   Necessary to avoid accidentally scheduling a rtimer in the past
-   on platforms with fast rtimer ticks. Should be >= 2. */
-#ifdef RTIMER_CONF_GUARD_TIME
-#define RTIMER_GUARD_TIME RTIMER_CONF_GUARD_TIME
-#else /* RTIMER_CONF_GUARD_TIME */
-#define RTIMER_GUARD_TIME (RTIMER_ARCH_SECOND >> 14)
-#endif /* RTIMER_CONF_GUARD_TIME */
-
-#endif /* RTIMER_H_ */
+#endif /* __RTIMER_H__ */
 
 /** @} */
 /** @} */

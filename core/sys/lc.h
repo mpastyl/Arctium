@@ -30,6 +30,7 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
+ * $Id: lc.h,v 1.1 2006/06/17 22:41:20 adamdunkels Exp $
  */
 
 /**
@@ -51,7 +52,7 @@
  */
 
 /**
- * \file core/sys/lc.h
+ * \file lc.h
  * Local continuations
  * \author
  * Adam Dunkels <adam@sics.se>
@@ -115,8 +116,8 @@
  */
 #endif /* DOXYGEN */
 
-#ifndef LC_H_
-#define LC_H_
+#ifndef __LC_H__
+#define __LC_H__
 
 #ifdef LC_CONF_INCLUDE
 #include LC_CONF_INCLUDE
@@ -124,7 +125,7 @@
 #include "sys/lc-switch.h"
 #endif /* LC_CONF_INCLUDE */
 
-#endif /* LC_H_ */
+#endif /* __LC_H__ */
 
 /** @} */
 /** @} */

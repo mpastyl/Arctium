@@ -28,9 +28,10 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * @(#)$Id: random.h,v 1.1 2006/06/17 22:41:18 adamdunkels Exp $
  */
-#ifndef RANDOM_H_
-#define RANDOM_H_
+#ifndef __RANDOM_H__
+#define __RANDOM_H__
 
 /*
  * Initialize the pseudo-random generator.
@@ -45,8 +46,6 @@ void random_init(unsigned short seed);
  */
 unsigned short random_rand(void);
 
-/* In gcc int rand() uses RAND_MAX and long random() uses RANDOM_MAX */
-/* Since random_rand casts to unsigned short, we'll use this maxmimum */
-#define RANDOM_RAND_MAX 65535U
+#define RANDOM_MAX 65535U
 
-#endif /* RANDOM_H_ */
+#endif /* __RANDOM_H__ */

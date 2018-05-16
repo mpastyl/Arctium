@@ -28,6 +28,7 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * @(#)$Id: leds.h,v 1.1 2006/06/17 22:41:16 adamdunkels Exp $
  */
 /**
  * \addtogroup dev
@@ -44,11 +45,8 @@
  * @{
  */
 
-#ifndef LEDS_H_
-#define LEDS_H_
-
-/* Allow platform to override LED numbering */
-#include "contiki-conf.h"
+#ifndef __LEDS_H__
+#define __LEDS_H__
 
 void leds_init(void);
 
@@ -57,33 +55,34 @@ void leds_init(void);
  */
 void leds_blink(void);
 
-#ifndef LEDS_GREEN
 #define LEDS_GREEN  1
-#endif /* LEDS_GREEN */
-#ifndef LEDS_YELLOW
-#define LEDS_YELLOW  2
-#endif /* LEDS_YELLOW */
-#ifndef LEDS_RED
-#define LEDS_RED  4
-#endif /* LEDS_RED */
-#ifndef LEDS_BLUE
-#define LEDS_BLUE  LEDS_YELLOW
-#endif /* LEDS_BLUE */
+#define LEDS_YELLOW 2
+#define LEDS_RED    4
+#define LEDS_BLUE   LEDS_YELLOW	/* Tmote Sky is colorblind? */
+#define leds_blue   leds_yellow
 
-#ifdef LEDS_CONF_ALL
-#define LEDS_ALL    LEDS_CONF_ALL
-#else /* LEDS_CONF_ALL */
 #define LEDS_ALL    7
-#endif /* LEDS_CONF_ALL */
 
 /**
- * Returns the current status of all leds
+ * Returns the current status of all leds (respects invert)
  */
 unsigned char leds_get(void);
-void leds_set(unsigned char leds);
 void leds_on(unsigned char leds);
 void leds_off(unsigned char leds);
 void leds_toggle(unsigned char leds);
+void leds_invert(unsigned char leds);
+
+
+
+
+void leds_green(int onoroff);
+void leds_red(int onoroff);
+void leds_yellow(int onoroff);
+#define LEDS_ON  1
+#define LEDS_OFF 0
+
+
+
 
 /**
  * Leds implementation
@@ -92,7 +91,4 @@ void leds_arch_init(void);
 unsigned char leds_arch_get(void);
 void leds_arch_set(unsigned char leds);
 
-#endif /* LEDS_H_ */
-
-/** @} */
-/** @} */
+#endif /* __LEDS_H__ */

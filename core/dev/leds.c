@@ -28,64 +28,61 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * @(#)$Id: leds.c,v 1.7 2009/02/24 21:30:20 adamdunkels Exp $
  */
 
 #include "dev/leds.h"
 #include "sys/clock.h"
 #include "sys/energest.h"
 
-static unsigned char leds;
+static unsigned char leds, invert;
 /*---------------------------------------------------------------------------*/
 static void
-show_leds(unsigned char new_leds)
+show_leds(unsigned char changed)
 {
-  unsigned char changed;
-  changed = leds ^ new_leds;
-  leds = new_leds;
-
   if(changed & LEDS_GREEN) {
     /* Green did change */
-    if(leds & LEDS_GREEN) {
+    if((invert ^ leds) & LEDS_GREEN) {
       ENERGEST_ON(ENERGEST_TYPE_LED_GREEN);
     } else {
       ENERGEST_OFF(ENERGEST_TYPE_LED_GREEN);
     }
   }
   if(changed & LEDS_YELLOW) {
-    if(leds & LEDS_YELLOW) {
+    if((invert ^ leds) & LEDS_YELLOW) {
       ENERGEST_ON(ENERGEST_TYPE_LED_YELLOW);
     } else {
       ENERGEST_OFF(ENERGEST_TYPE_LED_YELLOW);
     }
   }
   if(changed & LEDS_RED) {
-    if(leds & LEDS_RED) {
+    if((invert ^ leds) & LEDS_RED) {
       ENERGEST_ON(ENERGEST_TYPE_LED_RED);
     } else {
       ENERGEST_OFF(ENERGEST_TYPE_LED_RED);
     }
   }
-  leds_arch_set(leds);
+  leds_arch_set(leds ^ invert);
 }
 /*---------------------------------------------------------------------------*/
 void
 leds_init(void)
 {
   leds_arch_init();
-  leds = 0;
+  leds = invert = 0;
 }
 /*---------------------------------------------------------------------------*/
 void
 leds_blink(void)
 {
-  /* Blink all leds that were initially off. */
-  unsigned char blink;
-  blink = ~leds;
-  leds_toggle(blink);
+  /* Blink all leds. */
+  unsigned char inv;
+  inv = ~(leds ^ invert);
+  leds_invert(inv);
 
   clock_delay(400);
 
-  leds_toggle(blink);
+  leds_invert(inv);
 }
 /*---------------------------------------------------------------------------*/
 unsigned char
@@ -94,26 +91,37 @@ leds_get(void) {
 }
 /*---------------------------------------------------------------------------*/
 void
-leds_set(unsigned char ledv)
-{
-  show_leds(ledv);
-}
-/*---------------------------------------------------------------------------*/
-void
 leds_on(unsigned char ledv)
 {
-  show_leds(leds | ledv);
+  unsigned char changed;
+  changed = (~leds) & ledv;
+  leds |= ledv;
+  show_leds(changed);
 }
 /*---------------------------------------------------------------------------*/
 void
 leds_off(unsigned char ledv)
 {
-  show_leds(leds & ~ledv);
+  unsigned char changed;
+  changed = leds & ledv;
+  leds &= ~ledv;
+  show_leds(changed);
 }
 /*---------------------------------------------------------------------------*/
 void
 leds_toggle(unsigned char ledv)
 {
-  show_leds(leds ^ ledv);
+  leds_invert(ledv);
 }
+/*---------------------------------------------------------------------------*/
+/*   invert the invert register using the leds parameter */
+void
+leds_invert(unsigned char ledv) {
+  invert = invert ^ ledv;
+  show_leds(ledv);
+}
+/*---------------------------------------------------------------------------*/
+void leds_green(int o) { o?leds_on(LEDS_GREEN):leds_off(LEDS_GREEN); }
+void leds_yellow(int o) { o?leds_on(LEDS_YELLOW):leds_off(LEDS_YELLOW); }
+void leds_red(int o) { o?leds_on(LEDS_RED):leds_off(LEDS_RED); }
 /*---------------------------------------------------------------------------*/

@@ -28,6 +28,7 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * @(#)$Id: process.h,v 1.16 2008/10/14 12:46:39 nvt-se Exp $
  */
 
 /**
@@ -50,8 +51,8 @@
  * Adam Dunkels <adam@sics.se>
  *
  */
-#ifndef PROCESS_H_
-#define PROCESS_H_
+#ifndef __PROCESS_H__
+#define __PROCESS_H__
 
 #include "sys/pt.h"
 #include "sys/cc.h"
@@ -220,7 +221,7 @@ typedef unsigned char process_num_events_t;
  */
 #define PROCESS_PAUSE()             do {				\
   process_post(PROCESS_CURRENT(), PROCESS_EVENT_CONTINUE, NULL);	\
-  PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_CONTINUE);               \
+  PROCESS_WAIT_EVENT();							\
 } while(0)
 
 /** @} end of protothread functions */
@@ -291,35 +292,22 @@ static PT_THREAD(process_thread_##name(struct pt *process_pt,	\
  * This macro declares a process. The process has two names: the
  * variable of the process structure, which is used by the C program,
  * and a human readable string name, which is used when debugging.
- * A configuration option allows removal of the readable name to save RAM.
  *
  * \param name The variable name of the process structure.
  * \param strname The string representation of the process' name.
  *
  * \hideinitializer
  */
-#if PROCESS_CONF_NO_PROCESS_NAMES
-#define PROCESS(name, strname)				\
-  PROCESS_THREAD(name, ev, data);			\
-  struct process name = { NULL,		        \
-                          process_thread_##name }
-#else
 #define PROCESS(name, strname)				\
   PROCESS_THREAD(name, ev, data);			\
   struct process name = { NULL, strname,		\
                           process_thread_##name }
-#endif
 
 /** @} */
 
 struct process {
   struct process *next;
-#if PROCESS_CONF_NO_PROCESS_NAMES
-#define PROCESS_NAME_STRING(process) ""
-#else
   const char *name;
-#define PROCESS_NAME_STRING(process) (process)->name
-#endif
   PT_THREAD((* thread)(struct pt *, process_event_t, process_data_t));
   struct pt pt;
   unsigned char state, needspoll;
@@ -335,11 +323,11 @@ struct process {
  *
  * \param p A pointer to a process structure.
  *
- * \param data An argument pointer that can be passed to the new
+ * \param arg An argument pointer that can be passed to the new
  * process
  *
  */
-CCIF void process_start(struct process *p, process_data_t data);
+CCIF void process_start(struct process *p, const char *arg);
 
 /**
  * Post an asynchronous event.
@@ -362,7 +350,7 @@ CCIF void process_start(struct process *p, process_data_t data);
  * \retval PROCESS_ERR_FULL The event queue was full and the event could
  * not be posted.
  */
-CCIF int process_post(struct process *p, process_event_t ev, process_data_t data);
+CCIF int process_post(struct process *p, process_event_t ev, void* data);
 
 /**
  * Post a synchronous event to a process.
@@ -375,7 +363,7 @@ CCIF int process_post(struct process *p, process_event_t ev, process_data_t data
  * with the event.
  */
 CCIF void process_post_synch(struct process *p,
-			     process_event_t ev, process_data_t data);
+			     process_event_t ev, void* data);
 
 /**
  * \brief      Cause a process to exit
@@ -525,7 +513,7 @@ CCIF extern struct process *process_list;
 
 #define PROCESS_LIST() process_list
 
-#endif /* PROCESS_H_ */
+#endif /* __PROCESS_H__ */
 
 /** @} */
 /** @} */

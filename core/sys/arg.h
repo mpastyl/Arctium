@@ -29,14 +29,15 @@
  *
  * This file is part of the Contiki desktop OS
  *
+ * $Id: arg.h,v 1.1 2006/06/17 22:41:19 adamdunkels Exp $
  *
  */
-#ifndef ARG_H_
-#define ARG_H_
+#ifndef __ARG_H__
+#define __ARG_H__
 
 void arg_init(void);
 
 char *arg_alloc(char size);
 void arg_free(char *arg);
 
-#endif /* ARG_H_ */
+#endif /* __ARG_H__ */

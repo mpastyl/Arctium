@@ -1,3 +1,15 @@
+/**
+ * \addtogroup timer
+ * @{
+ */
+
+/**
+ * \file
+ * Timer library implementation.
+ * \author
+ * Adam Dunkels <adam@sics.se>
+ */
+
 /*
  * Copyright (c) 2004, Swedish Institute of Computer Science.
  * All rights reserved.
@@ -30,18 +42,7 @@
  *
  * Author: Adam Dunkels <adam@sics.se>
  *
- */
-
-/**
- * \file
- * Timer library implementation.
- * \author
- * Adam Dunkels <adam@sics.se>
- */
-
-/**
- * \addtogroup timer
- * @{
+ * $Id: timer.c,v 1.6 2010/02/23 18:40:08 adamdunkels Exp $
  */
 
 #include "contiki-conf.h"
@@ -76,9 +77,8 @@ timer_set(struct timer *t, clock_time_t interval)
  * function will cause the timer to be stable over time, unlike the
  * timer_restart() function.
  *
- * \note Must not be executed before timer expired
- *
  * \param t A pointer to the timer.
+ *
  * \sa timer_restart()
  */
 void
@@ -121,11 +121,10 @@ timer_restart(struct timer *t)
 int
 timer_expired(struct timer *t)
 {
-  /* Note: Can not return diff >= t->interval so we add 1 to diff and return
-     t->interval < diff - required to avoid an internal error in mspgcc. */
-  clock_time_t diff = (clock_time() - t->start) + 1;
-  return t->interval < diff;
-
+  clock_time_t diff = clock_time() - t->start;
+  /* This somewhat ugly way of returning (diff >= t->interval) is
+     required to avoid an internal error in mspgcc. */
+  return diff > t->interval || diff == t->interval;
 }
 /*---------------------------------------------------------------------------*/
 /**

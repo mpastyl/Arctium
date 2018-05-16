@@ -28,6 +28,7 @@
  *
  * This file is part of the Contiki operating system.
  *
+ * $Id: rtimer-arch.h,v 1.7 2010/03/19 13:25:52 adamdunkels Exp $
  */
 
 /**
@@ -37,31 +38,22 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#ifndef RTIMER_ARCH_H_
-#define RTIMER_ARCH_H_
+#ifndef __RTIMER_ARCH_H__
+#define __RTIMER_ARCH_H__
 
+#include <legacymsp430.h>
 #include "sys/rtimer.h"
 
-#ifdef RTIMER_CONF_SECOND
-#define RTIMER_ARCH_SECOND RTIMER_CONF_SECOND
-#else
-#define RTIMER_ARCH_SECOND (4096U*8)
-#endif
+#define RTIMER_ARCH_SECOND (32768U)
 
-/* Do the math in 32bits to save precision.
- * Round to nearest integer rather than truncate. */
-#define US_TO_RTIMERTICKS(US)  ((US) >= 0 ?                        \
-                               (((int32_t)(US) * (RTIMER_ARCH_SECOND) + 500000) / 1000000L) :      \
-                               ((int32_t)(US) * (RTIMER_ARCH_SECOND) - 500000) / 1000000L)
+//#define rtimer_arch_now() (TAR)
 
-#define RTIMERTICKS_TO_US(T)   ((T) >= 0 ?                     \
-                               (((int32_t)(T) * 1000000L + ((RTIMER_ARCH_SECOND) / 2)) / (RTIMER_ARCH_SECOND)) : \
-                               ((int32_t)(T) * 1000000L - ((RTIMER_ARCH_SECOND) / 2)) / (RTIMER_ARCH_SECOND))
+// MSP430 user manual recommends either stopping the timer before reading TAR 
+// or read it multiple times to avoid race conditions
+inline static rtimer_clock_t rtimer_arch_now() {rtimer_clock_t t; do {t=TAR;} while(t != TAR); return t;}
 
-/* A 64-bit version because the 32-bit one cannot handle T >= 4295 ticks.
-   Intended only for positive values of T. */
-#define RTIMERTICKS_TO_US_64(T)  ((uint32_t)(((uint64_t)(T) * 1000000 + ((RTIMER_ARCH_SECOND) / 2)) / (RTIMER_ARCH_SECOND)))
+// Cannot do the same with DCO here because Glossy's time-critical code
+// relies on that
+#define rtimer_arch_now_dco() (TBR)
 
-rtimer_clock_t rtimer_arch_now(void);
-
-#endif /* RTIMER_ARCH_H_ */
+#endif /* __RTIMER_ARCH_H__ */
