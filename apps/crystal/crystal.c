@@ -463,7 +463,6 @@ char sink_timer_handler(struct rtimer *t, void *ptr) {
         (CRYSTAL_SINK_MAX_NOISY_TS && n_high_noise >= CRYSTAL_SINK_MAX_NOISY_TS)// && (n_high_noise >= CRYSTAL_SINK_MAX_EMPTY_TS_DYNAMIC(n_ta))
       );
 // -- Phase A (root) ----------------------------------------------------------------- A (root) ---
-
       if (sleep_order)
         CRYSTAL_SET_ACK_SLEEP(crystal_ack);
       else
@@ -492,7 +491,7 @@ char sink_timer_handler(struct rtimer *t, void *ptr) {
 
       n_ta ++;
     }
-    app_epoch_end();
+    //app_epoch_end();
 
     cc2420_oscoff(); // put radio to deep sleep
 
@@ -924,7 +923,7 @@ char nonsink_timer_handler(struct rtimer *t, void *ptr) {
       n_noack_epochs ++;
     }
     cc2420_oscoff(); // deep sleep
-    app_epoch_end();
+    //app_epoch_end();
 
 #if CRYSTAL_LOGGING
     // Now we have a long pause, good time to print
@@ -1044,7 +1043,7 @@ PROCESS_THREAD(crystal_print_stats_process, ev, data)
         send_t[i].rx_count,
         send_t[i].acked);
     }
-
+    app_epoch_end();
     app_print_logs();
     /*printf("D %u:%u %lu %u:%u %lu %u\n", epoch,
         glossy_S.T_slot_h, glossy_S.T_slot_h_sum, glossy_S.win_cnt,
