@@ -222,7 +222,7 @@ void inline log_ta_tx() {
 #endif //CRYSTAL_LOGGING
 }
 
-#define IS_SINK() (node_id == CRYSTAL_SINK_ID)
+#define IS_SINK() (new_id == CRYSTAL_SINK_ID)
 
 #define IS_SYNCED()          (is_t_ref_l_updated())
 
@@ -354,7 +354,7 @@ char sink_timer_handler(struct rtimer *t, void *ptr) {
 
     epoch ++;
     crystal_sync->epoch = epoch;
-    crystal_sync->src = node_id;
+    crystal_sync->src = new_id;
     t_phase_stop = t_phase_start + DUR_S;
 
     tf_s = 0; tf_t = 0; tf_a = 0;
