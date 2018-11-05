@@ -10,7 +10,10 @@ export CFLAGS="$CFLAGS -DDISABLE_ETIMER=1"
 export CFLAGS="$CFLAGS -DBACKOFF=50"
 export CFLAGS="$CFLAGS -DDUMMY_DATA=1"
 export CFLAGS="$CFLAGS -DAGGREGATE=1"
-export CFLAGS="$CFLAGS -DID_BUFFER_SIZE=1"
+export CFLAGS="$CFLAGS -DID_BUFFER_SIZE=2"
+
+xeon_dir="/home/chasty/cooja_experiments/crystal_experiments/10_min_aggregation_2_b_merging/"
+xeon_log_path="\/home\/chasty\/cooja_experiments\/crystal_experiments\/10_min_aggregation_2_b_merging\/"
 
 export CFLAGS="$CFLAGS -DCRYSTAL_CONF_PERIOD=1.5"
 export CFLAGS="$CFLAGS -DCRYSTAL_LOGGING=1"
@@ -50,8 +53,10 @@ do
     sed -i -e "s/EXECUTABLE/$sim_id/g" $new_sim
     sed -i -e "s/FILLME/$timeout/g" $new_sim
     sed -i -e "s/TOTAL_TIMEOUT/630000000/g" $new_sim
+    sed -i -e "s/LOG_PATH/$xeon_log_path$meth\//g" $new_sim
     cp $new_sim /media/sf_geometric_monitoring_shared/geometric-monitoring/contiki_project/simulations/
     cp $new_sim /media/sf_geometric_monitoring_shared/geometric-monitoring/contiki_project/testing_folder/
+    scp $new_sim chasty@cse-31228.cse.chalmers.se:$xeon_dir$meth
     rm $new_sim
 done
 
@@ -81,6 +86,7 @@ do
          fi
          cp crystal.sky "/media/sf_geometric_monitoring_shared/geometric-monitoring/contiki_project/executables/crystal_"$meth".sky"
          cp crystal.sky "/media/sf_geometric_monitoring_shared/geometric-monitoring/contiki_project/testing_folder/crystal_"$meth".sky"
+         scp crystal.sky chasty@cse-31228.cse.chalmers.se:$xeon_dir$meth"/crystal_"$meth".sky"
          rm crystal.sky
      #done
 done
