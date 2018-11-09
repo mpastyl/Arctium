@@ -6,10 +6,10 @@ D_params ={
 "DUR_S_MS": [8],
 
 "N_TX_T": [2],
-"DUR_T_MS": [8],
+"DUR_T_MS": [5],
 
 "N_TX_A": [2],
-"DUR_A_MS": [8],
+"DUR_A_MS": [5],
 
 
 "CRYSTAL_SINK_MAX_EMPTY_TS" : [3],
