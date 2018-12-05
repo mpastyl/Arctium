@@ -227,7 +227,7 @@ void inline log_ta_tx() {
 #define IS_SYNCED()          (is_t_ref_l_updated())
 
 #if CRYSTAL_USE_DYNAMIC_NEMPTY
-#define CRYSTAL_SINK_MAX_EMPTY_TS_DYNAMIC(n_ta_) (((n_ta_)>1)?(CRYSTAL_SINK_MAX_EMPTY_TS):1)
+#define CRYSTAL_SINK_MAX_EMPTY_TS_DYNAMIC(n_ta_) (((n_ta_)>=1)?(CRYSTAL_SINK_MAX_EMPTY_TS):1)
 #warning ------------- !!! USING DYNAMIC N_EMPTY !!! -------------
 #else
 #define CRYSTAL_SINK_MAX_EMPTY_TS_DYNAMIC(n_ta_) CRYSTAL_SINK_MAX_EMPTY_TS
