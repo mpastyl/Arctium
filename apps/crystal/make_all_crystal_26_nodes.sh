@@ -21,7 +21,7 @@ export CFLAGS="$CFLAGS -DN_FULL_EPOCHS=1"
 
 export CFLAGS="$CFLAGS -DTX_POWER=31 -DRF_CHANNEL=26 -DCONCURRENT_TXS=5 -DNUM_ACTIVE_EPOCHS=1 -DN_TX_S=4 -DN_TX_T=4 -DN_TX_A=4 -DDUR_S_MS=12 -DDUR_T_MS=12 -DDUR_A_MS=12 -DCRYSTAL_LONGSKIP=0 -DCRYSTAL_SYNC_ACKS=1"
 export CFLAGS="$CFLAGS -DCRYSTAL_SINK_MAX_EMPTY_TS=3 -DCRYSTAL_MAX_SILENT_TAS=2 -DCRYSTAL_MAX_MISSING_ACKS=4 -DCRYSTAL_SINK_MAX_NOISY_TS=6"
-export CFLAGS="$CFLAGS -DCRYSTAL_USE_DYNAMIC_NEMPTY=1"
+export CFLAGS="$CFLAGS -DCRYSTAL_USE_DYNAMIC_NEMPTY=0"
 export CFLAGS="$CFLAGS -DCCA_THRESHOLD=-32 -DCCA_COUNTER_THRESHOLD=80"
 export CFLAGS="$CFLAGS -DCRYSTAL_PAYLOAD_LENGTH=25"
 #export CFLAGS="$CFLAGS -DSHORT_LOGS=1"
@@ -41,7 +41,7 @@ make clean
 rm crystal.sky
 
 method="gm"
-timeout="2322580645" #20 hours but shrunk to 1 sec per measurement
+timeout="3600000000" #24 hours but shrunk to 1 sec per measurement
 for meth in $method
 do
     new_sim="26_nodes_crystal_method_"$meth".csc"
@@ -49,7 +49,7 @@ do
     sim_id="crystal_"$meth
     sed -i -e "s/EXECUTABLE/$sim_id/g" $new_sim
     sed -i -e "s/FILLME/$timeout/g" $new_sim
-    sed -i -e "s/TOTAL_TIMEOUT/2422580645/g" $new_sim
+    sed -i -e "s/TOTAL_TIMEOUT/3601000000/g" $new_sim
     mv $new_sim /media/sf_geometric_monitoring_shared/geometric-monitoring/contiki_project/simulations/
 done
 
