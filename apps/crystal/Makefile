@@ -4,5 +4,5 @@ all: $(CONTIKI_PROJECT)
 #CONTIKI_SOURCEFILES +=
 
 
-CONTIKI = /home/user/contiki_latest_crystal_test/contiki_latest/contiki
+CONTIKI = ../../
 include $(CONTIKI)/Makefile.include
