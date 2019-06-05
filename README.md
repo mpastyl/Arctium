@@ -1,3 +1,5 @@
 # Arctium
 
-Placeholder for the source code of Arctium, a continious monitoring protocol for wireless sensor networks that combines synchronous transmitions (using Crystal) and communication reduction through Geometric Monitoring
+Arctium is an application-protocol codesign designed for continious threshold monitoring on top of synchronous transmission using in-network aggregation.
+
+Please switch to the Arctium branch
