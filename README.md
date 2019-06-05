@@ -13,9 +13,10 @@ It heavily relies on the Crystal protocol:
  * **Interference-Resilient Ultra-Low Power Aperiodic Data Collection**, Timofei Istomin, Matteo Trobinger, Amy L. Murphy, Gian Pietro Picco.  In Proceedings of the International Conference on Information Processing in Sensor Networks (IPSN 2018), to appear.
 
 
-#Build instructions
+# Build instructions
 
 cd simulations
+
 ./make_Arctium_26_nodes.sh
 
 which will create the executables for 26 sensor nodes as well as the 26_nodes_crystal_method_gm.csc simulation file which can be run in Cooja.
