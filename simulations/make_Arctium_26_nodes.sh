@@ -34,6 +34,8 @@ export CFLAGS="$CFLAGS -DBOOT_CHOPPING=BOOT_hop3"
 export CFLAGS="$CFLAGS -DCRYSTAL_START_DELAY_NONSINK=0 -DCRYSTAL_START_DELAY_SINK=0"
 
 
+echo "TARGET = sky"> ../apps/crystal/Makefile.target
+
 cd ../apps/crystal
 
 cp sndtbl_cooja.c sndtbl.c
